@@ -37,8 +37,8 @@ public class SimulatorTest {
 		inputs.add(entry);
 		
 		cal.setTime(beginningOfDay);
-		cal.add(Calendar.MINUTE, 10);
-		Entry entry2 = new Entry(cal.getTime(), Type.FOOD.toString(), 124); // testing my specific case.
+		cal.add(Calendar.MINUTE, 130);
+		Entry entry2 = new Entry(cal.getTime(), Type.FOOD.toString(), 46); // testing my specific case.
 		inputs.add(entry2);
 	}
 	
@@ -46,9 +46,9 @@ public class SimulatorTest {
 		
 		/* do squats at [beginningOfDay + 30 minutes] */
 		cal.setTime(beginningOfDay);
-		cal.add(Calendar.MINUTE, 5);
+		cal.add(Calendar.MINUTE, 10);
 		//Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 5); 
-		Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 7); // testing my specific case.  
+		Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 5); // testing my specific case.  
 		inputs.add(entry);
 	}
 }
