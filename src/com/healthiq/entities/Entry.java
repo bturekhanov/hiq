@@ -47,6 +47,10 @@ public class Entry {
 	    return (int)((time.getTime()/60000) - (beginingOfDay.getTime()/60000));
 	}
 	
+	public Date getTimestamp() {
+		return time;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

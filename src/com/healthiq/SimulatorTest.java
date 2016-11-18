@@ -23,7 +23,6 @@ public class SimulatorTest {
 		
 		/* Create a simulator and start it. Check outputs on the console then. */
 		BloodSugarSimulator simulator = new BloodSugarSimulatorImpl(80F, beginningOfDay, inputs);
-		//simulator.inputData(inputs);
 		simulator.start();
 		simulator.printOutputs();
 	}
@@ -32,10 +31,15 @@ public class SimulatorTest {
 		
 		/* Eat a sweet corn on the cob at [beginningOfDay + 10 minutes] */
 		cal.setTime(beginningOfDay);
-		cal.add(Calendar.MINUTE, 3);
+		cal.add(Calendar.MINUTE, 8);
 		//Entry entry = new Entry(cal.getTime(), Type.FOOD.toString(), 46);
-		Entry entry = new Entry(cal.getTime(), Type.FOOD.toString(), 124);
+		Entry entry = new Entry(cal.getTime(), Type.FOOD.toString(), 124); // testing my specific case.
 		inputs.add(entry);
+		
+		cal.setTime(beginningOfDay);
+		cal.add(Calendar.MINUTE, 10);
+		Entry entry2 = new Entry(cal.getTime(), Type.FOOD.toString(), 124); // testing my specific case.
+		inputs.add(entry2);
 	}
 	
 	public static void addExercises(List<Entry> inputs) {
@@ -44,7 +48,7 @@ public class SimulatorTest {
 		cal.setTime(beginningOfDay);
 		cal.add(Calendar.MINUTE, 5);
 		//Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 5); 
-		Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 7); 
+		Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 7); // testing my specific case.  
 		inputs.add(entry);
 	}
 }

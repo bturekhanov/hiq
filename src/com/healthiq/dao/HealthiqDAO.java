@@ -45,7 +45,7 @@ public class HealthiqDAO{
             }
 
         } catch (IOException e) {
-        	System.out.println("Error while reading foods from CVS file.");
+        	System.out.println("Error while reading foods from CSV file.");
             e.printStackTrace();
         }
         return foods;
@@ -71,7 +71,7 @@ public class HealthiqDAO{
             }
 
         } catch (IOException e) {
-        	System.out.println("Error while reading exercises from CVS file.");
+        	System.out.println("Error while reading exercises from CSV file.");
             e.printStackTrace();
         }
         return exercises;

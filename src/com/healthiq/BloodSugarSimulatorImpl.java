@@ -1,6 +1,5 @@
 package com.healthiq;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,10 +46,8 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 		System.out.println("======================================================================");
 		System.out.println("=================   Simulator is starting ... ========================\n");
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-		System.out.println("Beginning of day: " + dateFormat.format(beginOfDay) + "\n");
-		
-		outputs = sugarService.calculateSugar(inputs, outputs, beginOfDay);
+		sugarService.printAllEntries(beginOfDay, inputs);
+		outputs = sugarService.calculateSugar(inputs, outputs, beginOfDay, sugarStart);
 		
 		System.out.println("\n=================   Simulator is done! ===============================");
 		System.out.println("======================================================================");
