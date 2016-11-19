@@ -19,7 +19,7 @@ import com.healthiq.exceptions.ReadingCSVException;
 public class HealthiqDAO{
 
 	/**
-	 * Reads CVS file using BufferedReader and String split()
+	 * Reads CSV file 'foods.csv' using BufferedReader and String split()
 	 * and puts the data into a HashMap<Integer, Food>
 	 * 	map.key   = food id
 	 * 	map.value = food object
@@ -52,6 +52,14 @@ public class HealthiqDAO{
         return foods;
 	}
 	
+	/**
+	 * Reads CSV file 'exercises.csv' using BufferedReader and String split()
+	 * and puts the data into a HashMap<Integer, Food>
+	 * 	map.key   = exercise id
+	 * 	map.value = Exercise object
+	 * 
+	 * @return map<Integer, Exercise>
+	 */
 	public HashMap<Integer, Exercise> findAllExercise(){
 		HashMap<Integer, Exercise> exercises = new HashMap<Integer, Exercise>();
 		String workingDir = System.getProperty("user.dir");

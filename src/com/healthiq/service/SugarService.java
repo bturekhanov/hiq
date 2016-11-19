@@ -21,6 +21,13 @@ import com.healthiq.exceptions.BelowMinLimitException;
 import com.healthiq.exceptions.ExceedMaxLimitException;
 import com.healthiq.util.Type;
 
+/**
+ * Accepts several inputs of two types, food and exercise, each with a timestamp.
+ * Calculates a blood sugar and amount of glycaton per minute for 24 hours.  
+ * 
+ * @author Bakhy
+ *
+ */
 public class SugarService {
 	
 	public static final int NORMALIZATION_RATE = 1;

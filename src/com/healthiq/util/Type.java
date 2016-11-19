@@ -1,5 +1,11 @@
 package com.healthiq.util;
 
+/**
+ * Two type of input data.
+ * 
+ * @author Bakhy
+ *
+ */
 public enum Type {
 
 	FOOD(120), EXERCISE(60);

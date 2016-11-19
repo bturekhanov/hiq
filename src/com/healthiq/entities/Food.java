@@ -1,5 +1,14 @@
 package com.healthiq.entities;
 
+/**
+ * Holds Food info in the format [id, name, index]
+ * 
+ * Example:
+ * 	[58, 'Shortbread', 64']
+ * 
+ * @author Bakhy
+ *
+ */
 public class Food {
 	
 	public Integer id;

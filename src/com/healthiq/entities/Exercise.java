@@ -1,5 +1,14 @@
 package com.healthiq.entities;
 
+/**
+ * Holds Exercise info in the format [id, name, index]
+ * 
+ * Example:
+ * 	[1, 'Crunches', 20']
+ * 
+ * @author Bakhy
+ *
+ */
 public class Exercise {
 
 	public Integer id;

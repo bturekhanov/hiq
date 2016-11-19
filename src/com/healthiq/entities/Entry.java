@@ -3,7 +3,7 @@ package com.healthiq.entities;
 import java.util.Date;
 
 /**
- * This is an input data.
+ * This is an input data in the format [time, type, id]
  * 
  * Examples:
  * 	[07:00, "EXERCISE", 1]

@@ -8,6 +8,12 @@ import java.util.List;
 import com.healthiq.entities.Entry;
 import com.healthiq.util.Type;
 
+/**
+ * Tester of Blood Sugar Simulator.
+ * 
+ * @author Bakhy
+ *
+ */
 public class SimulatorTest {
 
 	@SuppressWarnings("deprecation")

@@ -8,6 +8,12 @@ import java.util.List;
 import com.healthiq.entities.Entry;
 import com.healthiq.service.SugarService;
 
+/**
+ * Sample implementation of Blood Sugar Simulator.
+ * 
+ * @author Bakhy
+ *
+ */
 public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 
 	private List<Entry> inputs;
