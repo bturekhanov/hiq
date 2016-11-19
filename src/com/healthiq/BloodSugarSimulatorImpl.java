@@ -36,7 +36,7 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 	private HashMap<Integer, Float> initializeMap() {
 		HashMap<Integer, Float> map = new HashMap<Integer, Float>();
 		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
-			map.put(i, SugarService.SUGAR_START);
+			map.put(i, SugarService.BLOOF_SUGAR_START);
 		}
 		return map;
 	}

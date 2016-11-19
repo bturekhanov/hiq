@@ -3,6 +3,7 @@ package com.healthiq.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -16,12 +17,16 @@ import com.healthiq.entities.Activity;
 import com.healthiq.entities.Entry;
 import com.healthiq.entities.Exercise;
 import com.healthiq.entities.Food;
+import com.healthiq.exceptions.BelowMinLimitException;
+import com.healthiq.exceptions.ExceedMaxLimitException;
 import com.healthiq.util.Type;
 
 public class SugarService {
 	
 	public static final int NORMALIZATION_RATE = 1;
-	public static final Float SUGAR_START = 80F;
+	public static final Float BLOOF_SUGAR_START = 80F;
+	public static final Float BLOOF_SUGAR_MIN_LIMIT = 5F;
+	public static final Float BLOOF_SUGAR_MAX_LIMIT = 1000F;
 	public static final Float GLYCATION_LIMIT = 150F;
 	
 	public static final int MINUTES_IN_DAY = 1440; // 24 * 60
@@ -79,7 +84,7 @@ public class SugarService {
 				}
 			}
 			
-			/* Update the sugar */
+			/* Update the blood sugar value in the map */
 			value = getValueAndUpdateActivites(activities); 
 			map.put(i, map.get(i-1) + value);
 			
@@ -108,20 +113,28 @@ public class SugarService {
 				glycation++;
 			}
 			glycations.put(i, glycation);
+			
+			/* Check blood sugar limits */
+			if (map.get(i) < BLOOF_SUGAR_MIN_LIMIT) {
+				throw new BelowMinLimitException("Emergency! Below than BLOOD_SUGAR_MIN_LIMIT: " + BLOOF_SUGAR_MIN_LIMIT + ", CURRENT_BLOOD_SUGAR: ", map.get(i), addMinute(beginOfDay, i + 1));
+			}
+			if (map.get(i) > BLOOF_SUGAR_MAX_LIMIT) {
+				throw new ExceedMaxLimitException("Emergency! Exceeds BLOOD_SUGAR_MAX_LIMIT: " + BLOOF_SUGAR_MAX_LIMIT + ", CURRENT_BLOOD_SUGAR: ", map.get(i), addMinute(beginOfDay, i + 1));
+			}
 		}
 		return map;
 	}
 	
-	/* Approaches sugarStart (80) linearly at a rate of 1 per minute. */
+	/* Approaches 80 linearly at a rate of 1 per minute. */
 	private void doNormalization(int minute, HashMap<Integer, Float> map) {
 		Float currentValue = map.get(minute);
-		if (currentValue < SUGAR_START) {
+		if (currentValue < BLOOF_SUGAR_START) {
 			Float newValue = currentValue + NORMALIZATION_RATE;
-			if (newValue > SUGAR_START) newValue = SUGAR_START;
+			if (newValue > BLOOF_SUGAR_START) newValue = BLOOF_SUGAR_START;
 			map.put(minute, newValue);
-		} else if (currentValue > SUGAR_START) {
+		} else if (currentValue > BLOOF_SUGAR_START) {
 			Float newValue = currentValue - NORMALIZATION_RATE;
-			if (newValue < SUGAR_START) newValue = SUGAR_START;
+			if (newValue < BLOOF_SUGAR_START) newValue = BLOOF_SUGAR_START;
 			map.put(minute, newValue);
 		}
 	}
@@ -182,5 +195,12 @@ public class SugarService {
 			}
 		}
 		
+	}
+	
+	public Date addMinute(Date date, int minute) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MINUTE, minute);
+		return cal.getTime();
 	}
 }

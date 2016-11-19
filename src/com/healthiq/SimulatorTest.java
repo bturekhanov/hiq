@@ -31,25 +31,24 @@ public class SimulatorTest {
 	public static void addFoods(List<Entry> inputs) {
 		
 		/* Eat a sweet corn on the cob at [beginningOfDay + 10 minutes] */
-		cal.setTime(beginningOfDay);
-		cal.add(Calendar.MINUTE, 8);
-		//Entry entry = new Entry(cal.getTime(), Type.FOOD.toString(), 46);
-		Entry entry = new Entry(cal.getTime(), Type.FOOD.toString(), 9); // testing my specific case.
+		Entry entry = new Entry(addMinute(beginningOfDay, 10), Type.FOOD.toString(), 9); // testing my specific case.
 		inputs.add(entry);
 		
-		cal.setTime(beginningOfDay);
-		cal.add(Calendar.MINUTE, 10);
-		Entry entry2 = new Entry(cal.getTime(), Type.FOOD.toString(), 46); // testing my specific case.
+		Entry entry2 = new Entry(addMinute(beginningOfDay, 12), Type.FOOD.toString(), 46); // testing my specific case.
 		inputs.add(entry2);
 	}
 	
 	public static void addExercises(List<Entry> inputs) {
 		
 		/* do squats at [beginningOfDay + 30 minutes] */
-		cal.setTime(beginningOfDay);
-		cal.add(Calendar.MINUTE, 10);
-		//Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 5); 
-		Entry entry = new Entry(cal.getTime(), Type.EXERCISE.toString(), 5); // testing my specific case.  
+		Entry entry = new Entry(addMinute(beginningOfDay, 30), Type.EXERCISE.toString(), 5); // testing my specific case.  
 		inputs.add(entry);
+	}
+	
+	public static Date addMinute(Date date, int minute) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.MINUTE, minute);
+		return cal.getTime();
 	}
 }

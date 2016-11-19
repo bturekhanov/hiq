@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import com.healthiq.entities.Exercise;
 import com.healthiq.entities.Food;
+import com.healthiq.exceptions.ReadingCSVException;
 
 /**
  * 
@@ -45,8 +46,8 @@ public class HealthiqDAO{
             }
 
         } catch (IOException e) {
-        	System.out.println("Error while reading foods from CSV file.");
-            e.printStackTrace();
+        	e.printStackTrace();
+        	throw new ReadingCSVException("Error is occurred when reading the CSV file: ", csvFile);
         }
         return foods;
 	}
@@ -71,8 +72,8 @@ public class HealthiqDAO{
             }
 
         } catch (IOException e) {
-        	System.out.println("Error while reading exercises from CSV file.");
             e.printStackTrace();
+            throw new ReadingCSVException("Error is occurred when reading the CSV file: ", csvFile);
         }
         return exercises;
 	}
