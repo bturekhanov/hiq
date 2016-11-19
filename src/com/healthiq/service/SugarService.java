@@ -24,9 +24,9 @@ import com.healthiq.util.Type;
 public class SugarService {
 	
 	public static final int NORMALIZATION_RATE = 1;
-	public static final Float BLOOF_SUGAR_START = 80F;
-	public static final Float BLOOF_SUGAR_MIN_LIMIT = 5F;
-	public static final Float BLOOF_SUGAR_MAX_LIMIT = 1000F;
+	public static final Float BLOOD_SUGAR_START = 80F;
+	public static final Float BLOOD_SUGAR_MIN_LIMIT = 5F;
+	public static final Float BLOOD_SUGAR_MAX_LIMIT = 1000F;
 	public static final Float GLYCATION_LIMIT = 150F;
 	
 	public static final int MINUTES_IN_DAY = 1440; // 24 * 60
@@ -115,11 +115,11 @@ public class SugarService {
 			glycations.put(i, glycation);
 			
 			/* Check blood sugar limits */
-			if (map.get(i) < BLOOF_SUGAR_MIN_LIMIT) {
-				throw new BelowMinLimitException("Emergency! Below than BLOOD_SUGAR_MIN_LIMIT: " + BLOOF_SUGAR_MIN_LIMIT + ", CURRENT_BLOOD_SUGAR: ", map.get(i), addMinute(beginOfDay, i + 1));
+			if (map.get(i) < BLOOD_SUGAR_MIN_LIMIT) {
+				throw new BelowMinLimitException("Emergency! Below than BLOOD_SUGAR_MIN_LIMIT: " + BLOOD_SUGAR_MIN_LIMIT + ", CURRENT_BLOOD_SUGAR: ", map.get(i), addMinute(beginOfDay, i + 1));
 			}
-			if (map.get(i) > BLOOF_SUGAR_MAX_LIMIT) {
-				throw new ExceedMaxLimitException("Emergency! Exceeds BLOOD_SUGAR_MAX_LIMIT: " + BLOOF_SUGAR_MAX_LIMIT + ", CURRENT_BLOOD_SUGAR: ", map.get(i), addMinute(beginOfDay, i + 1));
+			if (map.get(i) > BLOOD_SUGAR_MAX_LIMIT) {
+				throw new ExceedMaxLimitException("Emergency! Exceeds BLOOD_SUGAR_MAX_LIMIT: " + BLOOD_SUGAR_MAX_LIMIT + ", CURRENT_BLOOD_SUGAR: ", map.get(i), addMinute(beginOfDay, i + 1));
 			}
 		}
 		return map;
@@ -128,13 +128,13 @@ public class SugarService {
 	/* Approaches 80 linearly at a rate of 1 per minute. */
 	private void doNormalization(int minute, HashMap<Integer, Float> map) {
 		Float currentValue = map.get(minute);
-		if (currentValue < BLOOF_SUGAR_START) {
+		if (currentValue < BLOOD_SUGAR_START) {
 			Float newValue = currentValue + NORMALIZATION_RATE;
-			if (newValue > BLOOF_SUGAR_START) newValue = BLOOF_SUGAR_START;
+			if (newValue > BLOOD_SUGAR_START) newValue = BLOOD_SUGAR_START;
 			map.put(minute, newValue);
-		} else if (currentValue > BLOOF_SUGAR_START) {
+		} else if (currentValue > BLOOD_SUGAR_START) {
 			Float newValue = currentValue - NORMALIZATION_RATE;
-			if (newValue < BLOOF_SUGAR_START) newValue = BLOOF_SUGAR_START;
+			if (newValue < BLOOD_SUGAR_START) newValue = BLOOD_SUGAR_START;
 			map.put(minute, newValue);
 		}
 	}
@@ -175,7 +175,7 @@ public class SugarService {
 	}
 	
 	public void printAllEntries(Date beginOfDay, List<Entry> entries) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm a");
 		System.out.println("Beginning of day: " + dateFormat.format(beginOfDay) + "\n");
 
 		System.out.println("Input data:");

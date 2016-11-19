@@ -1,5 +1,6 @@
 package com.healthiq;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +37,7 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 	private HashMap<Integer, Float> initializeMap() {
 		HashMap<Integer, Float> map = new HashMap<Integer, Float>();
 		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
-			map.put(i, SugarService.BLOOF_SUGAR_START);
+			map.put(i, SugarService.BLOOD_SUGAR_START);
 		}
 		return map;
 	}
@@ -60,18 +61,30 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 
 	@Override
 	public void printBloodSugarPerMinuteMap() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm a");
+		Float bloodSugar;
+		
 		System.out.println("outputs in format [minute = blood_sugar]:");
+		
 		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
-			System.out.println(i + " = " + bloodSugarMap.get(i));
+		
+			Date time = sugarService.addMinute(beginOfDay, i);
+			
+			// Round a number to 2 decimal places
+			bloodSugar = (float) (Math.round(bloodSugarMap.get(i) * 1e2) / 1e2);
+			
+			System.out.println(dateFormat.format(time) + " = " + bloodSugar);
 		}
 	}
 
 	@Override
 	public void printGlycationsPerMinuteMap() {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm a");
 		
 		System.out.println("\n glycations in format [minute = glycation]:");
 		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
-			System.out.println(i + " = " + glycationsMap.get(i));
+			Date time = sugarService.addMinute(beginOfDay, i);
+			System.out.println(dateFormat.format(time) + " = " + glycationsMap.get(i));
 		}
 	}
 
