@@ -70,7 +70,6 @@ public class SugarService {
 		
 		/* Let's assume: At the very first minute of day, people can not eat foods and do exercises. 
 		 * So start calculating blood sugar from a second minute. */
-		glycations.put(0, 0);
 		for(int i=1; i<MINUTES_IN_DAY; i++) {
 			
 			if (i == entry.getTime(beginOfDay)) {
