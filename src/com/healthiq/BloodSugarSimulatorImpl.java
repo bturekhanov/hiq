@@ -13,16 +13,15 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 	private SugarService sugarService;
 	
 	/* key = minute, value = blood sugar value */
-	private HashMap<Integer, Float> outputs;
+	private HashMap<Integer, Float> bloodSugarMap;
 	
-	/* Blood sugar at the beginning of the day */
-	private Float sugarStart;
+	/* key = minute, value = glycation */
+	private HashMap<Integer, Integer> glycationsMap;
 	
 	/* Beginning of the day */
 	private Date beginOfDay;
 	
-	public BloodSugarSimulatorImpl(Float sugarStart, Date beginOfDay, List<Entry> inputs) {
-		this.sugarStart = sugarStart;
+	public BloodSugarSimulatorImpl(Date beginOfDay, List<Entry> inputs) {
 		this.beginOfDay = beginOfDay;
 		this.inputs = inputs;
 		initialize();
@@ -30,13 +29,14 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 	
 	private void initialize(){
 		sugarService = new SugarService();
-		outputs = initializeMap();
+		glycationsMap = new HashMap<Integer, Integer>();
+		bloodSugarMap = initializeMap();
     }
 	
 	private HashMap<Integer, Float> initializeMap() {
 		HashMap<Integer, Float> map = new HashMap<Integer, Float>();
 		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
-			map.put(i, sugarStart);
+			map.put(i, SugarService.SUGAR_START);
 		}
 		return map;
 	}
@@ -47,17 +47,10 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 		System.out.println("=================   Simulator is starting ... ========================\n");
 		
 		sugarService.printAllEntries(beginOfDay, inputs);
-		outputs = sugarService.calculateSugar(inputs, outputs, beginOfDay, sugarStart);
+		bloodSugarMap = sugarService.calculateSugar(beginOfDay, inputs, bloodSugarMap, glycationsMap);
 		
 		System.out.println("\n=================   Simulator is done! ===============================");
 		System.out.println("======================================================================");
-	}
-	
-	@Override
-	public void printOutputs() {
-		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
-			System.out.println(i + " = " + outputs.get(i));
-		}
 	}
 	
 	@Override
@@ -66,7 +59,31 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 	}
 
 	@Override
-	public HashMap<Integer, Float> getResult() {
-		return outputs;
+	public void printBloodSugarPerMinuteMap() {
+		System.out.println("outputs in format [minute = blood_sugar]:");
+		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
+			System.out.println(i + " = " + bloodSugarMap.get(i));
+		}
 	}
+
+	@Override
+	public void printGlycationsPerMinuteMap() {
+		
+		System.out.println("\n glycations in format [minute = glycation]:");
+		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
+			System.out.println(i + " = " + glycationsMap.get(i));
+		}
+	}
+
+	@Override
+	public HashMap<Integer, Float> getBloodSugarPerMinuteMap() {
+		return bloodSugarMap;
+	}
+
+	@Override
+	public HashMap<Integer, Integer> getGlycationsPerMinuteMap() {
+		return glycationsMap;
+	}
+
+	
 }

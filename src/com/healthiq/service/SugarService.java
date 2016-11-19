@@ -21,6 +21,9 @@ import com.healthiq.util.Type;
 public class SugarService {
 	
 	public static final int NORMALIZATION_RATE = 1;
+	public static final Float SUGAR_START = 80F;
+	public static final Float GLYCATION_LIMIT = 150F;
+	
 	public static final int MINUTES_IN_DAY = 1440; // 24 * 60
 	//public static final int MINUTES_IN_DAY = 400; // testing
 	
@@ -35,7 +38,7 @@ public class SugarService {
 		exercises = healthiqDAO.findAllExercise();
 	}
 	
-	public HashMap<Integer, Float> calculateSugar(List<Entry> entries, HashMap<Integer, Float> map, Date beginOfDay, Float sugarStart) {
+	public HashMap<Integer, Float> calculateSugar(Date beginOfDay, List<Entry> entries, HashMap<Integer, Float> map, HashMap<Integer, Integer> glycations) {
 		
 		/* validation */
 		if (entries == null || entries.size() == 0) return map;
@@ -50,10 +53,12 @@ public class SugarService {
 		Entry entry = queue.poll();
 		List<Activity> activities = new ArrayList<Activity>();
 		Float value = 0F;
+		int glycation = 0;
 		int noActivityPeriod = 0;
 		
 		/* Let's assume: At the very first minute of day, people can not eat foods and do exercises. 
 		 * So start calculating blood sugar from a second minute. */
+		glycations.put(0, 0);
 		for(int i=1; i<MINUTES_IN_DAY; i++) {
 			
 			if (i == entry.getTime(beginOfDay)) {
@@ -85,31 +90,38 @@ public class SugarService {
 			
 			/* normalization after food */
 			if (lastActivity != null && lastActivity.getType() == Type.FOOD && noActivityPeriod >= Type.FOOD.getPeriod()) {
-				doNormalization(i, map, sugarStart);
+				doNormalization(i, map);
 			}
 			
 			/* normalization after exercise */
 			if (lastActivity != null && lastActivity.getType() == Type.EXERCISE && noActivityPeriod >= Type.EXERCISE.getPeriod()) {
-				doNormalization(i, map, sugarStart);
+				doNormalization(i, map);
 			}
 			
 			/* move to next entry */
 			if (i == entry.getTime(beginOfDay) && !queue.isEmpty()) {
 				entry = queue.poll();
 			}
+			
+			/* tracking glycation */
+			if (map.get(i) > GLYCATION_LIMIT) {
+				glycation++;
+			}
+			glycations.put(i, glycation);
 		}
 		return map;
 	}
 	
-	private void doNormalization(int minute, HashMap<Integer, Float> map, Float sugarStart) {
+	/* Approaches sugarStart (80) linearly at a rate of 1 per minute. */
+	private void doNormalization(int minute, HashMap<Integer, Float> map) {
 		Float currentValue = map.get(minute);
-		if (currentValue < sugarStart) {
+		if (currentValue < SUGAR_START) {
 			Float newValue = currentValue + NORMALIZATION_RATE;
-			if (newValue > sugarStart) newValue = sugarStart;
+			if (newValue > SUGAR_START) newValue = SUGAR_START;
 			map.put(minute, newValue);
-		} else if (currentValue > sugarStart) {
+		} else if (currentValue > SUGAR_START) {
 			Float newValue = currentValue - NORMALIZATION_RATE;
-			if (newValue < sugarStart) newValue = sugarStart;
+			if (newValue < SUGAR_START) newValue = SUGAR_START;
 			map.put(minute, newValue);
 		}
 	}
