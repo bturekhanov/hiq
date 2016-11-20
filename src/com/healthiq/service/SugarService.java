@@ -66,7 +66,7 @@ public class SugarService {
 		List<Activity> activities = new ArrayList<Activity>();
 		Float value = 0F;
 		int glycation = 0;
-		int noActivityPeriod = 0;
+		int noActivityPeriod = -1;
 		
 		/* Let's assume: At the very first minute of day, people can not eat foods and do exercises. 
 		 * So start calculating blood sugar from a second minute. */
@@ -74,7 +74,7 @@ public class SugarService {
 			
 			if (i == entry.getTime(beginOfDay)) {
 				lastActivity = null;
-				noActivityPeriod = 0;
+				noActivityPeriod = -1;
 				if (entry.getType().toString().equals(Type.FOOD.toString())) {
 					
 					/* put the food into activities as an activity */
@@ -100,7 +100,7 @@ public class SugarService {
 			}
 			
 			/* normalization after food */
-			if (lastActivity != null && lastActivity.getType() == Type.FOOD && noActivityPeriod >= Type.FOOD.getPeriod()) {
+			if (lastActivity != null && lastActivity.getType() == Type.FOOD && noActivityPeriod >= Type.FOOD.getPeriod() + 1) {
 				doNormalization(i, map);
 			}
 			

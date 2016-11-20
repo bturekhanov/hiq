@@ -1,6 +1,9 @@
 package com.healthiq;
 
 import java.util.HashMap;
+import java.util.List;
+
+import com.healthiq.entities.Entry;
 
 
 /**
@@ -17,4 +20,5 @@ public interface BloodSugarSimulator {
 	public void reset();
 	public HashMap<Integer, Float> getBloodSugarPerMinuteMap();
 	public HashMap<Integer, Integer> getGlycationsPerMinuteMap();
+	public void setEntries(List<Entry> entries);
 }

@@ -16,7 +16,7 @@ import com.healthiq.service.SugarService;
  */
 public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 
-	private List<Entry> inputs;
+	private List<Entry> entries;
 	private SugarService sugarService;
 	
 	/* key = minute, value = blood sugar value */
@@ -28,9 +28,9 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 	/* Beginning of the day */
 	private Date beginOfDay;
 	
-	public BloodSugarSimulatorImpl(Date beginOfDay, List<Entry> inputs) {
+	public BloodSugarSimulatorImpl(Date beginOfDay, List<Entry> entries) {
 		this.beginOfDay = beginOfDay;
-		this.inputs = inputs;
+		this.entries = entries;
 		initialize();
 	}
 	
@@ -61,11 +61,14 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 		System.out.println("======================================================================");
 		System.out.println("=================   Simulator is starting ... ========================\n");
 		
-		sugarService.printAllEntries(beginOfDay, inputs);
-		bloodSugarMap = sugarService.calculateSugar(beginOfDay, inputs, bloodSugarMap, glycationsMap);
+		sugarService.printAllEntries(beginOfDay, entries);
+		bloodSugarMap = sugarService.calculateSugar(beginOfDay, entries, bloodSugarMap, glycationsMap);
 		
 		System.out.println("\n=================   Simulator is done! ===============================");
 		System.out.println("======================================================================");
+		
+		printBloodSugarPerMinuteMap();
+		printGlycationsPerMinuteMap();
 	}
 	
 	@Override
@@ -87,7 +90,8 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 			// Round a number to 2 decimal places
 			bloodSugar = (float) (Math.round(bloodSugarMap.get(i) * 1e2) / 1e2);
 			
-			System.out.println(dateFormat.format(time) + " = " + bloodSugar);
+			//System.out.println(dateFormat.format(time) + " = " + bloodSugar);
+			System.out.println(i + " = " + bloodSugar);
 		}
 	}
 
@@ -112,5 +116,11 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 		return glycationsMap;
 	}
 
-	
+	public List<Entry> getEntries() {
+		return entries;
+	}
+
+	public void setEntries(List<Entry> entries) {
+		this.entries = entries;
+	}
 }
