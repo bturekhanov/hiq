@@ -105,7 +105,7 @@ public class SugarService {
 			}
 			
 			/* normalization after exercise */
-			if (lastActivity != null && lastActivity.getType() == Type.EXERCISE && noActivityPeriod >= Type.EXERCISE.getPeriod()) {
+			if (lastActivity != null && lastActivity.getType() == Type.EXERCISE && noActivityPeriod >= Type.EXERCISE.getPeriod() + 1) {
 				doNormalization(i, map);
 			}
 			

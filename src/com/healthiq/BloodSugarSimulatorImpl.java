@@ -68,12 +68,14 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 		System.out.println("======================================================================");
 		
 		printBloodSugarPerMinuteMap();
-		printGlycationsPerMinuteMap();
+		//printGlycationsPerMinuteMap();
 	}
 	
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
+		if (entries != null) entries.clear();
+		glycationsMap = initGlycationMap();
+		bloodSugarMap = initBloodSugarMap();
 	}
 
 	@Override
@@ -90,8 +92,8 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 			// Round a number to 2 decimal places
 			bloodSugar = (float) (Math.round(bloodSugarMap.get(i) * 1e2) / 1e2);
 			
-			//System.out.println(dateFormat.format(time) + " = " + bloodSugar);
-			System.out.println(i + " = " + bloodSugar);
+			System.out.println(dateFormat.format(time) + " = " + bloodSugar);
+			//System.out.println(i + " = " + bloodSugar);
 		}
 	}
 

@@ -67,6 +67,8 @@ public class BloodSugarSimulatorTest {
 	}
 	
 	/**
+	 * Testing eating Food
+	 * 
 	 * Food [id=46, name=Sweet corn on the cob, index=60]
 	 * Eating time: 06.30 AM
 	 */
@@ -93,7 +95,7 @@ public class BloodSugarSimulatorTest {
 		
 		int tempPosition = 0;
 		
-		// after eating the food nothing happened, and its been two hours, so do the normalization.
+		// after food process nothing happened, and its been two hours, so do the normalization.
 		for(int i=eatingTime + (Type.FOOD.getPeriod() * 2); i<MINUTES_IN_DAY; i++) {
 			Float value = expectedBloodSugarMap.get(i - 1);
 			if ((value - 1F) < BLOOD_SUGAR_START) {
@@ -114,6 +116,8 @@ public class BloodSugarSimulatorTest {
 		List<Entry> entries = new ArrayList<Entry>();
 		Entry entry = new Entry(addMinute(eatingTime), Type.FOOD.toString(), 46);
 		entries.add(entry);
+		
+		simulator.reset();
 		simulator.setEntries(entries);
 		simulator.start();
 		
@@ -121,6 +125,65 @@ public class BloodSugarSimulatorTest {
 		assertEquals(expectedBloodSugarMap, actualBloodSugarMap);
 	}
 
+	/**
+	 * Testing exercise:
+	 * 
+	 * Exercise [id=5, name=Squats, index=60]
+	 * Eating time: 06.40 AM
+	 */
+	@Test 
+	public void testSqautsAndNormalizaton() { 
+		int exerciseTime = 40; // in minutes after begining of the day
+		Float exerciseIndex = 60F; // Squats index
+		Float sugarPerMinute = exerciseIndex / (float) Type.EXERCISE.getPeriod();
+		
+		HashMap<Integer, Float> expectedBloodSugarMap = initBloodSugarMap();
+		
+		Float lastBloodSugarValue = 0F;
+		
+		// doing Sqauts, it will decrease blood sugar linearly for one hours
+		for(int i=exerciseTime; i<exerciseTime + Type.EXERCISE.getPeriod(); i++){
+			lastBloodSugarValue = expectedBloodSugarMap.get(i-1) - sugarPerMinute;
+			expectedBloodSugarMap.put(i, lastBloodSugarValue);
+		}
+		
+		// put the last blood sugar in the remaining minutes
+		for(int i=exerciseTime + Type.EXERCISE.getPeriod(); i<MINUTES_IN_DAY; i++) {
+			expectedBloodSugarMap.put(i, lastBloodSugarValue);
+		}
+		
+		int tempPosition = 0;
+		
+		// after Squats process nothing happened, and its been one hour, so do the normalization.
+		for(int i=exerciseTime + (Type.EXERCISE.getPeriod() * 2); i<MINUTES_IN_DAY; i++) {
+			Float value = expectedBloodSugarMap.get(i - 1);
+			if ((value + 1F) > BLOOD_SUGAR_START) {
+				value = BLOOD_SUGAR_START;
+				expectedBloodSugarMap.put(i, value);
+				break;
+			}
+			expectedBloodSugarMap.put(i, value + 1F); 
+			tempPosition = i;
+		}
+		
+		// after the normalization, put 80 till end of the day.
+		for(int i=tempPosition; i<MINUTES_IN_DAY; i++){
+			expectedBloodSugarMap.put(i, BLOOD_SUGAR_START);
+		}
+		
+		// add Sqauts to the Simulator
+		List<Entry> entries = new ArrayList<Entry>();
+		Entry entry = new Entry(addMinute(exerciseTime), Type.EXERCISE.toString(), 5);
+		entries.add(entry);
+		
+		simulator.reset();
+		simulator.setEntries(entries);
+		simulator.start();
+		
+		HashMap<Integer, Float> actualBloodSugarMap = simulator.getBloodSugarPerMinuteMap();
+		assertEquals(expectedBloodSugarMap, actualBloodSugarMap);
+	}
+	
 	private Date addMinute(int minute) {
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(beginOfDay);
