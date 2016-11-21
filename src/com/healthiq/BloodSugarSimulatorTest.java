@@ -30,6 +30,7 @@ public class BloodSugarSimulatorTest {
 	
 	private static final int MINUTES_IN_DAY = 1440; // 24 * 60
 	private static final Float BLOOD_SUGAR_START = 80F;
+	private static final Float GLYCATION_LIMIT = 150F;
 	
 	@BeforeClass 
 	public static void setUp(){ 
@@ -57,6 +58,7 @@ public class BloodSugarSimulatorTest {
 			expectedGlycationMap.put(i, 0);
 		}
 		
+		simulator.reset();
 		simulator.start();
 		
 		HashMap<Integer, Float> actualBloodSugarMap = simulator.getBloodSugarPerMinuteMap();
@@ -129,7 +131,7 @@ public class BloodSugarSimulatorTest {
 	 * Testing exercise:
 	 * 
 	 * Exercise [id=5, name=Squats, index=60]
-	 * Eating time: 06.40 AM
+	 * time: 06.40 AM
 	 */
 	@Test 
 	public void testSqautsAndNormalizaton() { 
@@ -182,6 +184,103 @@ public class BloodSugarSimulatorTest {
 		
 		HashMap<Integer, Float> actualBloodSugarMap = simulator.getBloodSugarPerMinuteMap();
 		assertEquals(expectedBloodSugarMap, actualBloodSugarMap);
+	}
+	
+	/**
+	 * Tests glycation by eating the following foods:
+	 * 
+	 * Input entries:
+	 * 
+	 * [06:30 AM, type="FOOD", id=9] - Baguette, white, plain
+	 * [06:35 AM, type="FOOD", id=1] - Banana Cake
+	 */
+	@Test 
+	public void testGlycation(){
+		
+		// [id=9, name=Baguette, white, plain, index=95]
+		int baguetteTime = 30;
+		Float baguetteIndexPerMinute = 95F / Type.FOOD.getPeriod();
+		
+		// [id=1, name=Banana cake, made with sugar, index=47]
+		int bananaTime = 35;
+		Float bananaIndexPerMinute = 47F / Type.FOOD.getPeriod();
+		
+		HashMap<Integer, Float> expectedBloodSugarMap = initBloodSugarMap();
+		Float lastBloodSugarValue = 0F;
+		
+		// after eating the baguette, it will increase blood sugar linearly with baguette index per minute till bananaTime
+		for(int i=baguetteTime; i<bananaTime; i++){
+			expectedBloodSugarMap.put(i, expectedBloodSugarMap.get(i-1) + baguetteIndexPerMinute);
+		}
+		
+		// after eating the Banana, it will increase blood sugar linearly witt baguette and banana indexes till baguette end time.
+		for(int i=bananaTime; i<baguetteTime + Type.FOOD.getPeriod(); i++){
+			expectedBloodSugarMap.put(i, expectedBloodSugarMap.get(i-1) + baguetteIndexPerMinute + bananaIndexPerMinute);
+		}
+		
+		// after baguette period finishe, it will increase blood sugar linearly with only banana index till its end time.
+		for(int i=baguetteTime + Type.FOOD.getPeriod(); i<bananaTime + Type.FOOD.getPeriod(); i++){
+			lastBloodSugarValue = expectedBloodSugarMap.get(i-1) + bananaIndexPerMinute;
+			expectedBloodSugarMap.put(i, lastBloodSugarValue);
+		}
+		
+		// put the last blood sugar in the remaining minutes
+		for(int i=bananaTime + Type.FOOD.getPeriod(); i<MINUTES_IN_DAY; i++) {
+			expectedBloodSugarMap.put(i, lastBloodSugarValue);
+		}
+		  
+		int tempPosition = 0;
+		
+		// after banana process nothing happened, and its been two hours, so do the normalization.
+		for(int i=bananaTime + (Type.FOOD.getPeriod() * 2); i<MINUTES_IN_DAY; i++) {
+			Float value = expectedBloodSugarMap.get(i - 1);
+			if ((value - 1F) < BLOOD_SUGAR_START) {
+				value = BLOOD_SUGAR_START;
+				expectedBloodSugarMap.put(i, value);
+				break;
+			}
+			expectedBloodSugarMap.put(i, value - 1F); 
+			tempPosition = i;
+		}
+		
+		// after the normalization, put 80 till end of the day.
+		for(int i=tempPosition; i<MINUTES_IN_DAY; i++){
+			expectedBloodSugarMap.put(i, BLOOD_SUGAR_START);
+		}
+		
+		// build glycation map [key=minute, value=glycation]
+		// For every minute your blood sugar stays above 150, increment “glycation” by 1
+		HashMap<Integer, Integer> expectedGlycationMap = new HashMap<Integer, Integer>();
+		int glycation = 0;
+		int exptectedTotalGlycation = 0;
+		for(int i=0; i<MINUTES_IN_DAY; i++) {
+			if (expectedBloodSugarMap.get(i) > GLYCATION_LIMIT) {
+				glycation++;
+			}
+			expectedGlycationMap.put(i, glycation);
+			exptectedTotalGlycation += glycation;
+		}
+		
+		// entries for simulator
+		Entry entry1 = new Entry(addMinute(30), Type.FOOD.toString(), 9);
+		Entry entry2 = new Entry(addMinute(35), Type.FOOD.toString(), 1);
+		
+		List<Entry> entries = new ArrayList<Entry>();
+		entries.add(entry1);
+		entries.add(entry2);
+		
+		simulator.reset();
+		simulator.setEntries(entries);
+		simulator.start();
+		
+		HashMap<Integer, Integer> actualGlycationMap = simulator.getGlycationsPerMinuteMap();
+		int actualTotalGlycation = 0;
+		for(int i=0; i<MINUTES_IN_DAY; i++) {
+			actualTotalGlycation += actualGlycationMap.get(i);
+		}
+		
+		assertEquals(expectedGlycationMap, actualGlycationMap);
+		assertEquals(exptectedTotalGlycation, actualTotalGlycation);
 	}
 	
 	private Date addMinute(int minute) {

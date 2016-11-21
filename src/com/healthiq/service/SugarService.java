@@ -181,7 +181,7 @@ public class SugarService {
 	}
 	
 	public void printAllEntries(Date beginOfDay, List<Entry> entries) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm a");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 		System.out.println("Beginning of day: " + dateFormat.format(beginOfDay) + "\n");
 
 		System.out.println("Input data:");

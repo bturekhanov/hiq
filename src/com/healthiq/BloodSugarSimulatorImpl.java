@@ -80,7 +80,7 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 
 	@Override
 	public void printBloodSugarPerMinuteMap() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm a");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 		Float bloodSugar;
 		
 		System.out.println("outputs in format [minute = blood_sugar]:");
@@ -99,7 +99,7 @@ public class BloodSugarSimulatorImpl implements BloodSugarSimulator {
 
 	@Override
 	public void printGlycationsPerMinuteMap() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm a");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 		
 		System.out.println("\n glycations in format [minute = glycation]:");
 		for(int i=0; i<SugarService.MINUTES_IN_DAY; i++) {
